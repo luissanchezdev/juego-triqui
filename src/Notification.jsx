@@ -1,9 +1,7 @@
-
-
-function Notification() {
+function Notification({ message, type }) {
   return (
-    <div>
-      <h1>Notificación</h1>
+    <div className={ type === 'success' ? 'bg-green-600 text-white rounded-md my-2 capitalize' : 'bg-red-600 text-white rounded-md my-2 capitalize' }>
+      <p>{ message }</p>
     </div>
   )
 }

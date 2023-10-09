@@ -1,5 +1,6 @@
 import './App.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import Notification from './Notification'
 
 const valuesForDefault = ['', '', '', '', '', '', '', '', '']
 
@@ -14,6 +15,7 @@ function App() {
   const [ turnoUsuario1, setTurnoUsuario1 ] = useState(true)
   const [ turnoUsuario2, setTurnoUsuario2 ] = useState(false)
   const [ juegoFinalizado, setJuegoFinalizado ] = useState(false)
+  const [ notificationMessage, setNotificationMessage ] = useState(null)
 
   console.log({ juegoFinalizado })
 
@@ -21,19 +23,23 @@ function App() {
 
   const handleClick = (e) => {
     // () => setValuesFields( { ...valuesFields, position1 : 'x' })
-    const marca = turnoUsuario1 ? 'x' : 'o'
-    const position = Number(e.target.name)
-    const newValuesFields = [ ...valuesFields ]  
-    newValuesFields[position] = marca
-    console.log(newValuesFields[position])
-    if( valuesFields[position] !== '') {
-      return console.log('casilla ya tiene un valor')
+    if ( juegoFinalizado ) {
+      return console.log('juego finalizado')
+    } else {
+      const marca = turnoUsuario1 ? 'x' : 'o'
+      const position = Number(e.target.name)
+      const newValuesFields = [ ...valuesFields ]  
+      newValuesFields[position] = marca
+      console.log(newValuesFields[position])
+      if( valuesFields[position] !== '') {
+        return console.log('casilla ya tiene un valor')
+      }
+      setValuesFields( newValuesFields )
+      setTurnoUsuario1( !turnoUsuario1 )
+      return setTurnoUsuario2( !turnoUsuario2 )
     }
-    setValuesFields( newValuesFields )
-    setTurnoUsuario1( !turnoUsuario1 )
-    return setTurnoUsuario2( !turnoUsuario2 )
   }
-
+  
   const handleNewGame = () => {
     console.log('Nuevo juego')
     return setValuesFields(valuesForDefault)
@@ -43,17 +49,28 @@ function App() {
 
   // General
 
-  if( valuesFields[0] === valuesFields[1] && valuesFields[1] === valuesFields[2]  ){
-    console.log('inside')
-    if( valuesFields[0] === 'x' ){
-      console.log('jugador 1 ganó')
-    } else {
-      console.log('jugador 2 ganó')
+  useEffect(() => {
+    if( valuesFields[0] === valuesFields[1] && valuesFields[1] === valuesFields[2] && valuesFields[0] !== '' ){
+      console.log('inside')
+      if( valuesFields[0] === 'x' ){
+        console.log('jugador 1 ganó')
+        setNotificationMessage({
+          content: 'jugador 1 ganó',
+          type: 'success'
+        })
+        setJuegoFinalizado(true)
+      } else {
+        console.log('jugador 2 ganó')
+        setNotificationMessage({
+          content: 'jugador 2 ganó',
+          type: 'success'
+        })
+        setJuegoFinalizado(true)
+      }
+      /* setJuegoFinalizado(true)
+      return setValuesFields(['', '', '', '', '', '', '', '', '']) */
     }
-    /* setJuegoFinalizado(true)
-    return setValuesFields(['', '', '', '', '', '', '', '', '']) */
-  }
-
+  }, [ valuesFields ])
 
 
   return (
@@ -71,6 +88,11 @@ function App() {
         <button name='8' onClick={ handleClick } className='border-spacing-1 border-gray-400 text-white text-center bg-slate-700 rounded-md h-14'>{ valuesFields[8] }</button>
       </section>
       <div className='my-4'>
+        { notificationMessage && 
+          (
+            <Notification message={ notificationMessage.content } type={ notificationMessage.type } />
+          )
+        }
         <button onClick={ handleNewGame } className='btn bg-yellow-600 text-white'>Nuevo Juego</button>
       </div>
     </main>
