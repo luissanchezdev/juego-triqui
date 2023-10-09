@@ -39,10 +39,15 @@ function App() {
       return setTurnoUsuario2( !turnoUsuario2 )
     }
   }
-  
+
   const handleNewGame = () => {
     console.log('Nuevo juego')
+    setJuegoFinalizado(false)
+    setNotificationMessage(null)
+    setTurnoUsuario1(true)
+    setTurnoUsuario2(false)
     return setValuesFields(valuesForDefault)
+
   }
 
   console.log( valuesFields )
@@ -50,9 +55,29 @@ function App() {
   // General
 
   useEffect(() => {
-    if( valuesFields[0] === valuesFields[1] && valuesFields[1] === valuesFields[2] && valuesFields[0] !== '' ){
+    if( 
+      // rows
+      (valuesFields[0] === valuesFields[1] && valuesFields[1] === valuesFields[2]) && valuesFields[0] !== ''
+        ||
+      (valuesFields[3] === valuesFields[4] && valuesFields[4] === valuesFields[5]) && valuesFields[3] !== ''
+        ||
+      (valuesFields[6] === valuesFields[7] && valuesFields[7] === valuesFields[8]) && valuesFields[6] !== ''
+      // columns
+        ||
+      (valuesFields[0] === valuesFields[3] && valuesFields[3] === valuesFields[6]) && valuesFields[0] !== ''
+        ||
+      (valuesFields[1] === valuesFields[4] && valuesFields[4] === valuesFields[7]) && valuesFields[1] !== ''
+        ||
+      (valuesFields[2] === valuesFields[5] && valuesFields[5] === valuesFields[8]) && valuesFields[2] !== ''
+      // diagonals
+        ||
+      (valuesFields[0] === valuesFields[4] && valuesFields[4] === valuesFields[8]) && valuesFields[0] !== ''
+        ||
+      (valuesFields[6] === valuesFields[4] && valuesFields[4] === valuesFields[2]) && valuesFields[6] !== ''
+    
+    ){
       console.log('inside')
-      if( valuesFields[0] === 'x' ){
+      if( !turnoUsuario1 ){
         console.log('jugador 1 ganó')
         setNotificationMessage({
           content: 'jugador 1 ganó',
@@ -67,10 +92,8 @@ function App() {
         })
         setJuegoFinalizado(true)
       }
-      /* setJuegoFinalizado(true)
-      return setValuesFields(['', '', '', '', '', '', '', '', '']) */
     }
-  }, [ valuesFields ])
+  }, [ valuesFields, turnoUsuario1 ])
 
 
   return (
